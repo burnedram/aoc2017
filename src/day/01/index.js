@@ -1,3 +1,5 @@
+import { $, zip } from '../../shared/helpers';
+
 function task(mapper) {
     let val = $('#puzzleInput').value();
     val = val.split('').map(Number);
