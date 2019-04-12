@@ -1,0 +1,7 @@
+.correct {
+    color: lightgreen;
+}
+
+#spans {
+    overflow-wrap: break-word;
+}
