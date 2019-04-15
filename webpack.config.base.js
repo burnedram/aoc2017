@@ -1,5 +1,6 @@
 const path = require('path');
 const glob = require('glob');
+const webpack = require('webpack');
 
 const TsconfigPathsWebpackPlugin = require('tsconfig-paths-webpack-plugin');
 
@@ -60,6 +61,7 @@ function createConfig(page) {
             ]
         },
         plugins: [
+            new webpack.ProgressPlugin(),
             new ForkTsCheckerWebpackPlugin({
                 tsconfig: './tsconfig.json',
                 tslint: './tslint.json',
