@@ -4,13 +4,18 @@ block variables
     - var title = 'Day 01'
 
 block content
-    a(href="https://adventofcode.com/2017/day/1") Advent of Code
-    div
-        label(for="puzzleInput") Puzzle input
-        input(id="puzzleInput" type="text" placeholder="2+2=4-1=3 quik maf")
-        button(id="task01") Task 01
-        button(id="task02") Task 02
-    div
-        span Result:
-            span(id="result")
-        p(id="spans")
+    include /components/aoe-link.pug
+    template(id='task-01')
+        - var css = require('!!css-loader!less-loader!./task01.less')
+        style #{css}
+        aoc-link(href="https://adventofcode.com/2017/day/1") Advent of Code
+        div
+            label(for="puzzleInput") Puzzle input
+            input(id="puzzleInput" type="text" placeholder="2+2=4-1=3 quik maf")
+            button(id="task01") Task 01
+            button(id="task02") Task 02
+        div
+            span Result:
+                span(id="result")
+            p(id="spans")
+    task-01
