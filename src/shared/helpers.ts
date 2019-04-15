@@ -60,7 +60,7 @@ class JQuery implements IJQuery {
     }
 
     public empty(): void {
-        while(this.element.firstChild) {
+        while (this.element.firstChild) {
             this.element.firstChild.remove();
         }
     }
