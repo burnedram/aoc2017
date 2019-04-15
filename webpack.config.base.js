@@ -5,6 +5,7 @@ const TsconfigPathsWebpackPlugin = require('tsconfig-paths-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 function getPage(page) {
     return path.dirname(page.split(path.sep).slice(1).join(path.sep));
@@ -12,11 +13,13 @@ function getPage(page) {
 
 function createConfig(page) {
     return {
-        entry: `./src/${page}/index.ts`,
+        entry: [
+            `./src/${page}/index.ts`,
+            `./src/${page}/index.less`,
+        ],
         output: {
             path: path.resolve(__dirname, `dist/${page}`),
-            filename: 'bundle.js',
-            publicPath: ''
+            filename: 'scripts.js'
         },
         resolve: {
             extensions: ['.ts', '.js', '.json'],
@@ -32,6 +35,17 @@ function createConfig(page) {
                     test: /\.ts$/,
                     loader: 'ts-loader',
                     options: { transpileOnly: true }
+                },
+                {
+                    test: /\.less$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        'css-loader',
+                        {
+                            loader: 'less-loader',
+                            options: { paths: ['./src'] }
+                        }
+                    ]
                 }
             ]
         },
@@ -46,6 +60,9 @@ function createConfig(page) {
                 filename: 'index.html',
                 template: `./src/${page}/index.html`,
                 inject: 'head'
+            }),
+            new MiniCssExtractPlugin({
+                filename: 'styles.css'
             })
         ]
     };
