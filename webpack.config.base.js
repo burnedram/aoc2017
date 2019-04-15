@@ -2,6 +2,10 @@ const path = require('path');
 const glob = require('glob');
 
 const TsconfigPathsWebpackPlugin = require('tsconfig-paths-webpack-plugin');
+
+const TerserWebpackPlugin = require('terser-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -47,6 +51,12 @@ function createConfig(page) {
                         }
                     ]
                 }
+            ]
+        },
+        optimization: {
+            minimizer: [
+                new TerserWebpackPlugin(),
+                new OptimizeCSSAssetsPlugin()
             ]
         },
         plugins: [
