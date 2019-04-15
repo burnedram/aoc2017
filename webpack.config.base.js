@@ -42,6 +42,11 @@ function createConfig(page) {
                     options: { transpileOnly: true }
                 },
                 {
+                    test: /\.pug$/,
+                    loader: 'pug-loader',
+                    options: { pretty: true, root: path.resolve(__dirname, 'src') }
+                },
+                {
                     test: /\.less$/,
                     use: [
                         MiniCssExtractPlugin.loader,
@@ -70,7 +75,7 @@ function createConfig(page) {
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 filename: 'index.html',
-                template: `./src/${page}/index.html`,
+                template: `./src/${page}/index.pug`,
                 inject: 'head'
             }),
             new MiniCssExtractPlugin({
@@ -80,6 +85,6 @@ function createConfig(page) {
     };
 };
 
-module.exports = glob.sync('src/**/index.html')
+module.exports = glob.sync('src/**/index.pug')
         .map(getPage)
         .map(createConfig);
