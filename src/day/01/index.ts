@@ -1,5 +1,5 @@
 import { zip } from '@/shared/helpers';
-import '@/components/aoe-link';
+import '@/components/aoc-link';
 
 type IMapper = (v: number, i: number, a: number[]) => number;
 

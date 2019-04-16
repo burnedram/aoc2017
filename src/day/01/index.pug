@@ -4,10 +4,9 @@ block variables
     - var title = 'Day 01'
 
 block content
-    include /components/aoe-link.pug
+    include /components/aoc-link.pug
     template(id='task-01')
-        - var css = require('!!css-loader!less-loader!./task01.less')
-        style #{css}
+        link(rel="stylesheet" type="text/css" href=require('./task01.less'))
         aoc-link(href="https://adventofcode.com/2017/day/1") Advent of Code
         div
             label(for="puzzleInput") Puzzle input

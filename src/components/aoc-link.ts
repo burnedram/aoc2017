@@ -18,6 +18,12 @@ customElements.define('aoc-link',
             shadowRoot.appendChild(templateContent.cloneNode(true));
 
             this.a = querySelectorPls<HTMLAnchorElement>(shadowRoot, 'a');
+        }
+
+        public connectedCallback() {
+            if (!this.isConnected) {
+                return;
+            }
             const href = this.getAttribute('href');
             if (href !== null) {
                 this.a.href = href;

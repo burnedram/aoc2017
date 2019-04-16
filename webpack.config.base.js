@@ -10,7 +10,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const NoEmitWebpackPlugin = require('no-emit-webpack-plugin');
 
 function getPage(page) {
     return path.dirname(page.split(path.sep).slice(1).join(path.sep));
@@ -18,13 +18,10 @@ function getPage(page) {
 
 function createConfig(page) {
     return {
-        entry: [
-            `./src/${page}/index.ts`,
-            `./src/${page}/index.less`,
-        ],
+        entry: './src/entry.js',
         output: {
-            path: path.resolve(__dirname, `dist/${page}`),
-            filename: 'scripts.js'
+            path: path.resolve(__dirname, 'dist'),
+            filename: '[name].js'
         },
         resolve: {
             extensions: ['.ts', '.js', '.json'],
@@ -36,6 +33,26 @@ function createConfig(page) {
         },
         module: {
             rules: [
+                {
+                    test: /index\.ts$/,
+                    use: [
+                        {
+                            loader: 'file-loader',
+                            options: { 
+                                name: '[name].js',
+                                outputPath: (url, resourcePath, context) => {
+                                    const relativePath = path.dirname(path.relative(path.resolve(__dirname, 'src'), resourcePath));
+                                    return `${relativePath}/${url}`;
+                                },
+                                publicPath: (url, resourcePath, context) => {
+                                    return 'FIXME.js';
+                                }
+                             }
+                        },
+                        'extract-loader',
+                        path.resolve('js-loader.js')
+                    ]
+                },
                 {
                     test: /\.ts$/,
                     loader: 'ts-loader',
@@ -49,14 +66,27 @@ function createConfig(page) {
                 {
                     test: /\.less$/,
                     use: [
-                        MiniCssExtractPlugin.loader,
+                        {
+                            loader: 'file-loader',
+                            options: {
+                                name: '[name].css',
+                                outputPath: (url, resourcePath, context) => {
+                                    const relativePath = path.dirname(path.relative(path.resolve(__dirname, 'src'), resourcePath));
+                                    return `${relativePath}/${url}`;
+                                },
+                                publicPath: (url, resourcePath, context) => {
+                                    return 'FIXME.css';
+                                }
+                            }
+                        },
+                        'extract-loader',
                         'css-loader',
                         {
                             loader: 'less-loader',
                             options: { paths: ['./src'] }
                         }
                     ]
-                }
+                },
             ]
         },
         optimization: {
@@ -74,13 +104,11 @@ function createConfig(page) {
             }),
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
-                filename: 'index.html',
+                filename: `${page}/index.html`,
                 template: `./src/${page}/index.pug`,
-                inject: 'head'
+                inject: false
             }),
-            new MiniCssExtractPlugin({
-                filename: 'styles.css'
-            })
+            new NoEmitWebpackPlugin()
         ]
     };
 };
