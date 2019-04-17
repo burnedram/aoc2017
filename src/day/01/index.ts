@@ -1,5 +1,5 @@
 import { zip } from '@/shared/helpers';
-import '@/components/aoc-link';
+import { AocLinkComponent } from '@/components/aoc-link/aoc-link';
 
 type IMapper = (v: number, i: number, a: number[]) => number;
 
@@ -19,6 +19,7 @@ customElements.define('task-01',
 
         constructor() {
             super();
+            const abc = new AocLinkComponent();
             const template = querySelectorPls<HTMLTemplateElement>(document, '#task-01');
             const templateContent = template.content;
             const shadowRoot = this.attachShadow({mode: 'open'});

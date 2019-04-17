@@ -1,3 +1,3 @@
-import '@/components/aoc-link';
+import '@/components/aoc-link/aoc-link';
 
 console.log('index');

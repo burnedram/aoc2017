@@ -13,7 +13,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const NoEmitWebpackPlugin = require('no-emit-webpack-plugin');
 
 function getPage(page) {
-    return path.dirname(page.split(path.sep).slice(1).join(path.sep));
+    const relativePath = path.dirname(path.relative('./src', page));
+    return relativePath;
 }
 
 function createConfig(page) {
@@ -61,7 +62,47 @@ function createConfig(page) {
                 {
                     test: /\.pug$/,
                     loader: 'pug-loader',
-                    options: { pretty: true, root: path.resolve(__dirname, 'src') }
+                    options: {
+                        pretty: true,
+                        root: path.resolve(__dirname, 'src'),
+                        plugins: [{
+                            postLoad: ast => {
+                                const walk = require('pug-walk');
+                                const tags = [];
+                                walk(ast, (node, replace) => {
+                                    if (node.type === 'Tag') {
+                                        tags.push(node.name);
+                                    }
+                                }, { includeDependencies: true });
+                                const components = [];
+                                new Set(tags).forEach(tag => {
+                                    const templates = glob.sync(`./src/components/**/${tag}/${tag}.pug`);
+                                    if (templates.length > 1) {
+                                        throw new Error(`multiple components with name "${tag}" found`);
+                                    }
+                                    if (templates[0]) {
+                                        const pugPath = path.relative('./src', templates[0]);
+                                        components.push(`@/${pugPath}`);
+                                    }
+                                });
+                                return walk(ast, null, function(node, replace) {
+                                    if (node.type === 'NamedBlock' && node.name === 'content' && node.nodes) {
+                                        node.nodes.unshift(components.map(comp => {
+                                            return {
+                                                type: 'Code',
+                                                val: `require("${comp}").call(this, locals)`,
+                                                buffer: true,
+                                                mustEscape: false,
+                                                isInline: false,
+                                                line: node.line,
+                                                filename: node.filename
+                                            };
+                                        }))
+                                    }
+                                }, { includeDependencies: true });
+                            }
+                        }]
+                     }
                 },
                 {
                     test: /\.less$/,
@@ -113,6 +154,6 @@ function createConfig(page) {
     };
 };
 
-module.exports = glob.sync('src/**/index.pug')
+module.exports = glob.sync('./src/**/index.pug')
         .map(getPage)
         .map(createConfig);
