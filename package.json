@@ -17,7 +17,7 @@
     "html-webpack-plugin": "^4.0.0-beta.5",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
-    "no-emit-webpack-plugin": "github:burnedram/no-emit-webpack-plugin",
+    "no-emit-webpack-plugin": "^2.0.1",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "pug": "^2.0.3",
     "pug-loader": "^2.4.0",
